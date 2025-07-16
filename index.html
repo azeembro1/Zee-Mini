@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zee Mini - Student Management</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#8b5cf6">
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/genai": "https://esm.sh/@google/genai@^0.7.0",
+          "xlsx": "https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"
+        }
+      }
+    </script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div id="app-container">
+        <!-- Page 1: Initial Setup (shown only once) -->
+        <section id="page-initial-setup" class="page active">
+            <header class="page-header corner-logo">
+                <div class="logo-text">ZEE<br>MINI</div>
+            </header>
+            <div class="start-content">
+                <h1 class="page-title">Welcome!</h1>
+                <p class="app-description">Let's get your institute set up. This is a one-time step.</p>
+                <div id="initial-setup-form" class="form-container">
+                    <input id="setup-institute-name" type="text" class="input-field" placeholder="Enter Your Institute's Name">
+                    <button type="button" id="initial-setup-btn" class="btn btn-large">Get Started</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Academic Year Selection -->
+        <section id="page-year-selection" class="page">
+            <header class="page-header main-header">
+                <img id="user-logo-year-selection" class="logo-circle" src="" alt="Logo">
+                <h2 id="college-name-year-selection">College Name</h2>
+                 <div class="header-controls">
+                    <button id="user-settings-btn" class="btn btn-secondary">Settings</button>
+                    <button id="main-menu-btn" class="btn btn-secondary">Menu</button>
+                 </div>
+            </header>
+            <div class="form-container" style="align-items: center;">
+                <h1 class="page-title">Select Year</h1>
+                <p>Select the academic year to manage, or add a new one.</p>
+                <select id="year-selector" class="input-field"></select>
+                <button id="add-year-btn" class="btn btn-secondary" style="margin-top: -0.5rem; margin-bottom: 1rem;">Add New Year</button>
+                <button id="year-proceed-btn" class="btn btn-large">Proceed</button>
+            </div>
+        </section>
+
+        <!-- Class Selection -->
+        <section id="page-class-selection" class="page">
+            <header class="page-header main-header">
+                <button class="btn-back" data-target="page-year-selection">&larr;</button>
+                <img id="user-logo-class-selection" class="logo-circle" src="" alt="Logo">
+                <h2 id="college-name-class-selection">College Name</h2>
+                 <div id="year-display-class" class="year-display"></div>
+            </header>
+            <div id="class-grid" class="grid-container"></div>
+        </section>
+
+        <!-- Class Details -->
+        <section id="page-class-details" class="page column">
+            <header class="page-header main-header">
+                <button class="btn-back" data-target="page-class-selection">&larr;</button>
+                 <img id="user-logo-class-details" class="logo-circle" src="" alt="Logo">
+                <h2 id="college-name-class-details">College Name</h2>
+                <div id="class-name-header" class="class-name-chip">9th Class</div>
+                <div class="header-controls">
+                     <label for="attendance-date">Attendance Date:</label>
+                     <input type="date" id="attendance-date" class="input-field-small">
+                     <button id="view-class-report-btn" class="btn btn-small">View Class Report</button>
+                </div>
+            </header>
+            <div class="table-container">
+                <table id="student-table">
+                    <thead>
+                        <tr>
+                            <th>Photo</th>
+                            <th>Student Details</th>
+                            <th>Phone</th>
+                            <th>%</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="student-table-body"></tbody>
+                </table>
+            </div>
+             <button id="add-student-btn" class="btn">Add New Student</button>
+        </section>
+        
+        <!-- Class Report Page -->
+        <section id="page-class-report" class="page column">
+             <header class="page-header main-header">
+                 <button class="btn-back" data-target="page-class-details">&larr;</button>
+                <img id="user-logo-class-report" class="logo-circle" src="" alt="Logo">
+                <h2 id="college-name-class-report">College Name</h2>
+                 <div id="class-report-name-header" class="class-name-chip">Class Report</div>
+            </header>
+            <div class="report-container">
+                <div class="report-main-stats">
+                    <div class="stat-card">
+                        <h4>Overall Class Attendance</h4>
+                        <p id="class-report-percentage">0%</p>
+                    </div>
+                    <div id="class-report-teacher-info" class="teacher-info-card"></div>
+                </div>
+                <h3>Student Performance Ranking</h3>
+                <div id="class-report-student-list" class="ranked-student-list"></div>
+            </div>
+        </section>
+
+        <!-- Student Report -->
+        <section id="page-student-report" class="page column">
+             <header class="page-header main-header">
+                 <button class="btn-back" data-target="page-class-details">&larr;</button>
+                <img id="user-logo-student-report" class="logo-circle" src="" alt="Logo">
+                <h2 id="college-name-student-report">College Name</h2>
+                <div class="attendance-percentage" id="student-attendance-percent">70%</div>
+            </header>
+            
+            <div class="report-top-info">
+                 <div class="report-card">
+                    <h3>Report For</h3>
+                    <div class="student-photo-large-container">
+                        <img id="report-student-photo" src="" alt="Student Photo" class="student-photo-large">
+                    </div>
+                    <p id="report-student-name">Muhammad Ali</p>
+                    <p id="report-student-phone">030123xxxx</p>
+                </div>
+                <div id="report-teacher-info" class="teacher-info-card" style="display: none;"></div>
+            </div>
+
+            <div id="attendance-chart" class="attendance-chart"></div>
+            
+            <button id="generate-ai-summary-btn" class="btn">
+                <svg style="width:20px;height:20px;margin-right:8px;" viewBox="0 0 24 24"><path fill="currentColor" d="M12.5 2.1c.4-.2.8-.2 1.2 0l7.2 3.6c.4.2.8.6.8 1.1v7.2c0 .4-.2.8-.5 1.1l-3.6 3.6c-.3.3-.7.5-1.1.5l-7.2.2c-.5 0-.9-.3-1.1-.8l-3.6-7.2c-.2-.4-.2-.8 0-1.2L8 5.8c.2-.4.6-.8 1.1-.8l3.4-2.9zm-1.9 6.5c-.5 0-1 .2-1.4.6s-.6.9-.6 1.4c0 .5.2 1 .6 1.4s.9.6 1.4.6 1-.2 1.4-.6.6-.9.6-1.4-.2-1-.6-1.4-.9-.6-1.4-.6zm4.8 4.8c-.5 0-1 .2-1.4.6s-.6.9-.6 1.4c0 .5.2 1 .6 1.4s.9.6 1.4.6 1-.2 1.4-.6.6-.9.6-1.4-.2-1-.6-1.4-.9-.6-1.4-.6z"></path></svg>
+                Generate AI Summary
+            </button>
+
+             <div id="ai-summary-container" class="ai-summary" style="display: none;">
+                <h3>AI Generated Summary</h3>
+                <p id="ai-summary-text"></p>
+                <div id="ai-summary-loader" class="loader" style="display: none;"></div>
+            </div>
+        </section>
+        
+        <footer id="app-footer" class="app-footer">
+            <p id="admin-access-trigger">© 2024 AZEEM BRO. All rights reserved.</p>
+        </footer>
+    </div>
+    
+    <!-- MODALS -->
+
+    <!-- Generic Confirmation/Form Modal -->
+    <div id="modal-backdrop" class="modal-backdrop" style="display: none;">
+        <div id="modal-content" class="modal-content">
+            <h2 id="modal-title">Modal Title</h2>
+            <div id="modal-body"></div>
+            <div id="modal-footer">
+                <button id="modal-cancel-btn" class="btn btn-secondary">Cancel</button>
+                <button id="modal-confirm-btn" class="btn">Confirm</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Menu Modal (New) -->
+    <div id="main-menu-modal" class="modal-backdrop" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-tabs">
+                <button class="modal-tab-btn active" data-tab="tab-about">About & Donate</button>
+                <button class="modal-tab-btn" data-tab="tab-settings">Settings</button>
+            </div>
+
+            <!-- About & Donate Tab -->
+            <div id="tab-about" class="modal-tab-content active">
+                <h3>About Zee Mini</h3>
+                <p class="app-info-text">A streamlined, offline-first student management app designed for simplicity and efficiency. All data is stored locally on your device.</p>
+                
+                <div class="dev-info-card">
+                    <h4>Developer Info</h4>
+                    <p>This app was created by <strong>AZEEM BRO</strong>.</p>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/azeembro2" target="_blank" rel="noopener noreferrer" title="Facebook">
+                            <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.32 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 12 2.04Z"></path></svg>
+                        </a>
+                        <a href="https://www.instagram.com/azeembro11/?next=%2F" target="_blank" rel="noopener noreferrer" title="Instagram">
+                             <svg viewBox="0 0 24 24"><path fill="currentColor" d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8A1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5a5 5 0 0 1-5 5a5 5 0 0 1-5-5a5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3Z"></path></svg>
+                        </a>
+                         <a href="mailto:bikworld39100@gmail.com" title="Email">
+                            <svg viewBox="0 0 24 24"><path fill="currentColor" d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z"></path></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <h4>Voluntary Donation</h4>
+                <p class="app-info-text">If you find this app useful, please consider supporting its development.</p>
+                <div class="payment-details-box">
+                    <strong>Easypaisa</strong><br>
+                    <span id="donate-easypaisa-name"></span><br>
+                    <span id="donate-easypaisa-number" class="payment-number"></span>
+                </div>
+                <div class="payment-details-box">
+                    <strong>Jazzcash</strong><br>
+                    <span id="donate-jazzcash-name"></span><br>
+                    <span id="donate-jazzcash-number" class="payment-number"></span>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="tab-settings" class="modal-tab-content">
+                <form id="user-settings-form" class="modal-form">
+                    <label for="user-college-name">Institute Name</label>
+                    <input type="text" id="user-college-name" class="input-field" required>
+                    <label for="user-logo-upload">Upload Logo</label>
+                    <input type="file" id="user-logo-upload" class="input-field" accept="image/*">
+                    <img id="user-logo-preview" src="" alt="Logo Preview" style="max-width: 100px; margin-top: 10px; display: none;">
+                </form>
+                 <div class="data-management-section">
+                    <h4>Data Management (Backup & Restore)</h4>
+                    <p class="app-info-text">Save a backup of all your data to a file, or restore from a backup file. Keep your backup file safe!</p>
+                    <div class="data-buttons">
+                        <button id="export-data-btn" class="btn btn-secondary">Export All Data</button>
+                        <button id="import-data-btn" class="btn btn-secondary">Import Data</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                 <button id="main-menu-close-btn" class="btn btn-secondary">Close</button>
+                 <button id="main-menu-save-btn" class="btn">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="admin-settings-modal" class="modal-backdrop" style="display: none;">
+        <div class="modal-content">
+            <h2>Admin: Donation Info</h2>
+            <form id="admin-settings-form" class="modal-form">
+                <p>This information will be shown to users when they click the "Donate" button.</p>
+                <label for="admin-info-name">Your Name (for display)</label>
+                <input type="text" id="admin-info-name" class="input-field">
+                <label for="admin-info-easypaisa-name">Easypaisa Account Name</label>
+                <input type="text" id="admin-info-easypaisa-name" class="input-field">
+                <label for="admin-info-easypaisa">Easypaisa Number</label>
+                <input type="text" id="admin-info-easypaisa" class="input-field" placeholder="e.g., 03xxxxxxxxx">
+                <label for="admin-info-jazzcash-name">Jazzcash Account Name</label>
+                <input type="text" id="admin-info-jazzcash-name" class="input-field">
+                <label for="admin-info-jazzcash">Jazzcash Number</label>
+                <input type="text" id="admin-info-jazzcash" class="input-field" placeholder="e.g., 03xxxxxxxxx">
+            </form>
+            <div class="modal-footer">
+                 <button id="cancel-admin-settings-btn" class="btn btn-secondary">Cancel</button>
+                 <button id="save-admin-settings-btn" class="btn">Save Info</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="global-loader" class="loader-overlay" style="display: none;">
+        <div class="loader"></div>
+    </div>
+    
+    <script type="module" src="index.tsx"></script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>

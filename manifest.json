@@ -1,0 +1,16 @@
+{
+  "name": "Zee Mini",
+  "short_name": "Zee Mini",
+  "description": "A complete student management application with AI-powered insights.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#8b5cf6",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
